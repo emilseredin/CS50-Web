@@ -1,0 +1,153 @@
+Django project generally consists of one or more Django applications.
+Similar to Google having search, gmail, drive, etc
+Or Amazon having shopping, video, AWS, etc.
+
+Separate apps can have different capacities.
+
+django-admin startproject <name> - create a project
+python3 manage.py startapp <name> - create an app
+python3 manage.py runserver - run the django server
+
+After the app has been created, it has to be installed in the project (settings.py)
+Add the app name to INSTALLED_APPS list.
+
+to create a url for the new app:
+-create a urls.py file in the app folder
+-add the app name in the projects's urls file
+
+the templates reside in app's templates directory
+
+html doesn't have support for variables
+
+in order to fully use templates, use third paramater in the render method, called context
+this pass all the data to the template
+
+django uses a templating engine
+this allows to insert data in the html files via {{}}
+
+urls.py
+views.py
+<app_name>templates/<app_name>/<name>.html
+
+django handles static files in the following ways:
+all static files are stored in the app's static folder
+
+template inheritance allow to specify the layout file, which other templates can inherit
+
+we generally try not to hardcore urls in the application
+<a href="{% url 'add' %}">Add a new task</a>
+here django will look into urls.py file and search for a path with name="add" argument
+
+CSRF - cross site request forgery
+for post requests
+CSRF validation - django has it turned on by default
+each session will have its own token
+when a user submits the form, he submits the token with the form
+
+both client-side and server-side validation are required
+client side validation can be disabled or a request can be submitted without browser
+or without performing any validation.
+
+a route can handle various request methods (GET, POST, PATCH etc.)
+
+reverse("tasks:index") - in the views.py file (routers) 
+django will figure out the correct url for tasks app with a route named index
+
+global variables are a bad idea
+entire app has access to them, so anyone who visits the website, will be able to see the tasks
+basically they are shared between all the requests that come in
+
+sessions solve this
+sessions are based on cookies
+a way for django to remember who made the request and to store related data.
+django can store the session data
+
+by default django stores session data in a database
+
+python3 manage.py migrate - grants django access to the database
+
+
+SQL Models and migrations
+=========================
+
+Databases and tables for data
+
+Relational Database Management Systems
+
+MySQL, PostgreSQL - database servers
+
+SQLite - lightweight implementation - stores all data in a single file
+
+SQLite has a short list of data types that it supports:
+- TEXT
+- NUMERIC (number-like data)
+- INTEGER
+- REAL
+- BLOB (binary-like object, like audio, images etc.)
+
+CREATE TABLE flights (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    origin TEXT NOT NULL,
+    destination TEXT NOT NULL,
+    duration INTEGER NOT NULL
+)
+
+PRIMARY KEY - unique identifier of the entry (row in the table)
+
+Constraints that can be added to the columns:
+---------------------------------------------
+- CHECK - range of values
+- DEFAULT
+- NOT NULL
+- PRIMARY KEY
+- UNIQUE
+
+INSERT INTO flights
+    (origin, destination, duration)
+    VALUES ("New York", "London", 415)
+
+SELECT * FROM flights
+* - wildcard, denotes everything, all data
+
+SELECT origin, destination FROM flights;
+
+SELECT * FROM flights WHERE id = 3;
+SELECT * FROM flights WHERE origin = "New York";
+SELECT * FROM flights WHERE origin IN ("New York", "Lima")
+SELECT * FROM flights WHERE duration > 500 OR destination = "Paris"
+SELECT * FROM flights WHERE origin LIKE "%a%"
+
+% - wildcard - 0 or more chars
+
+touch flights.sql
+sqlite3 flights.sql
+
+.tables - show tables
+
+# format the output
+.mode columns
+.headers yes
+
+Functions that can be added to SELECT queries:
+----------------------------------------------
+- AVERAGE
+- COUNT
+- MAX
+- MIN
+- SUM
+...
+
+UPDATE flights
+    SET duration = 430
+    WHERE origin = "New York"
+    AND destination = "London";
+
+DELETE FROM flights WHERE destination = "Tokyo"
+
+Other clauses:
+--------------
+- LIMIT
+- ORDER BY
+- GROUP BY
+- HAVING - constraint placed on GROUP BY
+
