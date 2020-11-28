@@ -151,3 +151,108 @@ Other clauses:
 - GROUP BY
 - HAVING - constraint placed on GROUP BY
 
+
+
+Multiple tables of data might relato to each other in some way.
+Normalize data: separate things out into different tables, in order to avoid duplication and errors.
+
+Flights - one type of object
+Another type of object that we care about in this case is Airport
+
+create airports table:
+id - code - city
+
+We can substitute origin and destination fields with a foreign key - reference to another table
+The foreign key should be a unique identifier in the table that is referenced, i.e. tthe referenced tables's primary key
+
+Then, origin and destination fields will be substituted with <id> from airports table.
+
+passengers table:
+id - first - last - flight_id
+
+When designing data tables, we have to think about the implications of the design.
+For passengers table, there's a limitation:
+only one flight per passenger
+
+Different type of relationship that rows in the table can have one to another:
+- Many to One, one to many
+- Many to Many 
+
+Create a separate table for people.
+Then create a separate table for flights.
+
+passengers:
+person_id - flight_id
+Association table a.k.a join table - many to many relationship
+
+SQL makes it easy for us to take many tables and join them together in order to efficiently extract data.
+SELECT first, origin, destination FROM flights JOIN passengers ON passenger.flight_id = flights_id
+
+passenger.flight_id = flights_id - the way flights and passengers tabled are related to one another.
+
+JOINs:
+------
+- Join / Inner Join only those results are returned that match the ON condition
+- left outer join
+- right outer join
+- full outer join
+
+Optimizations to make queries more efficient:
+- create index on a particular table (same as searchign for the page number by the topic in the book index)
+- it takes time and memory
+- makes querying much more efficient
+
+# create an index based on the passengers last name
+CREATE INDEX name_index ON passengers (last)
+
+Every technology has its vulnerabilities that can pose a threat.
+SQL has a SQL injection security vulnerability.
+
+in SQL -- stands for comment
+hacker can enter the following: hacker"-- 
+this will be plugged into a SQL command (username field) and will essentially comment out the check for password
+To prevent this, the dangerous characters can be escaped, so that they don't become a part of the SQL syntax.
+OR, an abstraction layer can be used, so that SQL queries don't have to be written at all.
+
+Race conditions:
+if 2 people try to like the same post at the same time
+the queries can interfere with each other and the result of some other query might not be as expected
+- place a lock on db while an operation is in progress
+
+
+Models - a way of creating a python class that is going to represent data that will be stored in the database
+models.py file
+every model - python class
+1 model for each table
+
+migrations - a way of applying changes to the database via django
+1. migration is created 
+2. migration is executed 
+
+python3 manage.py makemigrations
+new file is created in the flights/migrations dir
+instructions to django for how to manipulate the database to reflect the changes that hae been made to the model
+
+basically, in order to apply changes to the database, the following needs to be done
+1. a model has to be created (when defining schema) with all necessary info
+2. a migration has to be created via manage.py makemigrations command
+3. a migration has to be executed via manage.py migrate
+
+django provides abstraction layers, makign it possible to use python to manipulate data
+also, django has its own shell, which can be used to test database
+
+manage.py shell
+from flights.models import Flight
+f = Flight(origin="New York", destination="London", duration=415)
+f.save()
+
+this is an abstraction layer which allows us to bypass SQL syntax, and use python to manipulate data
+
+select * from flights; --> Flight.objects.all()
+
+add __str__ to the model class, in order to provide the string representation of the flight object
+
+in order to Normalize tables, create separate classes for the tables
+rewrite Flights class to make origin a foreign key
+
+Cascade: when an airport that is referenced in flights table is deleted, all corresponding flights will be removed as well.
